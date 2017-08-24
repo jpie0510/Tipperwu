@@ -43,24 +43,29 @@ class ViewController: UIViewController {
         
         print("populating recent bill...")
         
-        var bill = 0.00
-        currencyFormatter.numberStyle = .currency
-        billAmountField.becomeFirstResponder()
-        
-        
-       // check if more than 10 minutes have elapsed
+        // check if more than 10 minutes have elapsed
        
         if defaults.object(forKey: "bill_last_updated") != nil {
             let timeLastUpdated : NSDate
             timeLastUpdated = defaults.object(forKey:"bill_last_updated") as! NSDate
-            if timeLastUpdated.timeIntervalSinceNow < (-60*0.1) {
+            if timeLastUpdated.timeIntervalSinceNow > (-60*10) {
+                print(timeLastUpdated.timeIntervalSinceNow)
                 print("Less than time elapsed")
-                bill = Double(defaults.integer(forKey:"bill_amount"))
+                // bill = Double(defaults.integer(forKey:"bill_amount"))
+                billAmountField.text = defaults.string(forKey:"bill_amount")
                 
             }
-            billAmountField.text = currencyFormatter.string(for:bill)
-            calculateTip(self)
+            else {
+                billAmountField.text = ""
+                defaults.set("", forKey:"bill_amount")
+                tipAmountLabel.text = currencyFormatter.string(from: 0.00)
+                totalAmountLabel.text = currencyFormatter.string(from: 0.00)
+                
+                
+                
+            }
         }
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
